@@ -1,0 +1,154 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+    service: frontend
+    project: istio-course
+spec:
+  ports:
+    - port: 8080
+      name: http
+  selector:
+    app: frontend
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: servicemesh-frontend
+  labels:
+    app: frontend
+    service: frontend
+    project: istio-course
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: frontend
+  labels:
+    app: frontend
+    project: istio-course
+spec:
+  host: frontend
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-v1
+  labels:
+    app: frontend
+    version: v1
+    project: istio-course
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+      version: v1
+      project: istio-course
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v1
+        project: istio-course
+    spec:
+      serviceAccountName: servicemesh-frontend
+      containers:
+        - name: frontend
+          image: neciro/frontend-service:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: "/actuator/health"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: "/actuator/health"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "500M"
+              cpu: "0.15"
+            limits:
+              memory: "1500M"
+              cpu: "0.75"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-v2
+  labels:
+    app: frontend
+    version: v2
+    project: istio-course
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+      version: v2
+      project: istio-course
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v2
+        project: istio-course
+    spec:
+      serviceAccountName: servicemesh-frontend
+      containers:
+        - name: frontend
+          image: neciro/frontend-service:2.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: "/actuator/health"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: "/actuator/health"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "500M"
+              cpu: "0.15"
+            limits:
+              memory: "1500M"
+              cpu: "0.75"
