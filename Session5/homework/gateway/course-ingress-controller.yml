@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: course-istio-gateway
+  labels:
+    project: istio-course
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /books
+        backend:
+          serviceName: books
+          servicePort: 8080
+      - path: /frontend
+        backend:
+          serviceName: frontend
+          servicePort: 8080
+      - path: /authors
+        backend:
+          serviceName: authors
+          servicePort: 8080
