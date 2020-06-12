@@ -18,6 +18,8 @@ kind: ServiceAccount
 metadata:
   name: servicemesh-books
   labels:
+    app: books
+    service: books
     project: istio-course
 ---
 apiVersion: apps/v1

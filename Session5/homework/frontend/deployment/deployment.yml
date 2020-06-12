@@ -11,13 +11,15 @@ spec:
     - port: 8080
       name: http
   selector:
-    app: frontend 
+    app: frontend
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: servicemesh-frontend
   labels:
+    app: frontend
+    service: frontend
     project: istio-course
 ---
 apiVersion: apps/v1

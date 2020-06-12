@@ -2,10 +2,10 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: course-istio-gateway
-  labels:
-    project: istio-course
   annotations:
     kubernetes.io/ingress.class: "istio"
+  labels:
+    project: istio-course
 spec:
   rules:
   - http:
