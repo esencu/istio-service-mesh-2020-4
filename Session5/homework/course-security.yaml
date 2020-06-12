@@ -1,0 +1,39 @@
+apiVersion: "security.istio.io/v1beta1"
+kind: RequestAuthentication
+metadata:
+  name: course-req-auth
+  labels:
+    project: istio-course
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  jwtRules:
+  - issuer: "https://dev-odessa.eu.auth0.com/"
+    jwksUri: "https://dev-odessa.eu.auth0.com/.well-known/jwks.json"
+---
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name:  course-auth-policy
+  labels:
+    project: istio-course  
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  rules:
+  - from:
+    - source:
+        requestPrincipals: ["*"]
+
+---
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default
+  labels:
+     project: istio-course
+spec:
+  mtls:
+    mode: STRICT

@@ -18,8 +18,6 @@ kind: ServiceAccount
 metadata:
   name: servicemesh-authors
   labels:
-    app: authors
-    service: authors
     project: istio-course
 ---
 apiVersion: apps/v1
